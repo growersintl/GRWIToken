@@ -13,6 +13,23 @@
     "type": "git",
     "url": "git+https://github.com/growersintl/GRWIToken.git"
   },
+    "dependencies": {
+    "dotenv": "^5.0.0"
+  },
+  "devDependencies": {
+    "babel-node-modules": "0.0.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.17.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
+    "chai-bignumber": "^2.0.0",
+    "truffle": "^4.0.6",
+    "truffle-hdwallet-provider": "0.0.3",
+    "zeppelin-solidity": "1.7.0"
+  },
   "author": "Adam Skrodzki",
   "license": "ISC",
   "bugs": {
