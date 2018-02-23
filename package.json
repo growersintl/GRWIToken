@@ -1,0 +1,22 @@
+{
+  "name": "grwi",
+  "version": "1.0.0",
+  "description": "Growers International Token",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/growersintl/GRWIToken.git"
+  },
+  "author": "Adam Skrodzki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/growersintl/GRWIToken/issues"
+  },
+  "homepage": "https://github.com/growersintl/GRWIToken#readme"
+}
