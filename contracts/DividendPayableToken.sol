@@ -34,7 +34,7 @@ contract DividendPayableToken is MintableToken {
       timeStart = getNow();
   }
   
-  function addToDividendSum(uint128 _value) private{
+  function addToDividendSum(uint128 _value) internal{
       uint128 _ds = divSums[dividendRound];
       AdditionalDividend(_value,dividendRound);
       if(_ds == 0){
