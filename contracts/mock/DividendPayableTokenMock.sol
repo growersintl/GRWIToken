@@ -8,4 +8,14 @@ contract DividendPayableTokenMock is DividendPayableToken {
         mint(adr3,baseAmount);
         finishMinting();
     }
+    
+  uint32 public _now ;
+  
+  function getNow() public constant returns(uint32){
+      return uint32(_now);
+  }
+    
+  function setNow(uint32 _n) public{
+      _now = _n;
+  }
 }
