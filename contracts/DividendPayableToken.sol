@@ -39,7 +39,7 @@ contract DividendPayableToken is MintableToken {
       }
   }
   
-  function DividendPayableToken() MintableToken(){
+  function DividendPayableToken() MintableToken() public{
       timeStart = getNow();
   }
   
