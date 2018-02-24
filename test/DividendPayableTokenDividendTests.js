@@ -45,7 +45,7 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
                 var senderOwnsAfter = (await data.token.balanceOf(_)).toNumber();
                 var recipientOwnsAfter = (await data.token.balanceOf(recipient1)).toNumber();
                 assert.isAbove(senderOwnsAfter,senderOwns);
-                console.log(recipientOwnsAfter/recipientOwns,senderOwnsAfter/senderOwns);
+                //checks if increase is proportional to amounts owned
                 assert.equal(recipientOwnsAfter/recipientOwns,senderOwnsAfter/senderOwns);
             });
             
