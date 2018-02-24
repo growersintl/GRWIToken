@@ -89,57 +89,62 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
               
           }
           
-          describe('token transfer when no dividend to pay',function() {
-            tokenTransferTestCases(_,function(){return recipient1;});
-          });
-          
-          describe('token transferFrom when no dividend to pay',function() {
+          var tokenTransferFromTestCases = function(_from,_to,_as){
+            
               it('fails if user try to send more funds that he owns',async function(){
-                var userOwns = (await data.token.balanceOf(recipient2)).toNumber();
+                var userOwns = (await data.token.balanceOf(_as())).toNumber();
                 var amount = userOwns+1;
-                await data.token.approve(_,amount,{from:recipient2});
+                await data.token.approve(_from,amount,{from:_as()});
                 
-                var promise = data.token.transferFrom(recipient2,recipient1,amount,{from:_});
+                var promise = data.token.transferFrom(_as(),_to(),amount,{from:_from});
                 assertRevert(promise);
               });
               it('do not fail if user try to send all funds that he owns',async function(){
-                var userOwns = (await data.token.balanceOf(recipient2)).toNumber();
+                var userOwns = (await data.token.balanceOf(_as())).toNumber();
                 var amount = userOwns;
-                await data.token.approve(_,amount,{from:recipient2});
+                await data.token.approve(_from,amount,{from:_as()});
                 
-                await data.token.transferFrom(recipient2,recipient1,amount,{from:_});
+                await data.token.transferFrom(_as(),_to(),amount,{from:_from});
               });
               it('do not fail if user try to send some funds that he owns',async function(){
-                var userOwns = (await data.token.balanceOf(recipient2)).toNumber();
+                var userOwns = (await data.token.balanceOf(_as())).toNumber();
                 var amount = userOwns/2;
-                await data.token.approve(_,amount,{from:recipient2});
+                await data.token.approve(_from,amount,{from:_as()});
                 
-                await data.token.transferFrom(recipient2,recipient1,amount,{from:_});
+                await data.token.transferFrom(_as(),_to(),amount,{from:_from});
               });
               
               it('cause sender balance to decrease by send amount',async function(){
                   
-                var userOwns = (await data.token.balanceOf(recipient2)).toNumber();
+                var userOwns = (await data.token.balanceOf(_as())).toNumber();
                 var amount = userOwns/2;
-                await data.token.approve(_,amount,{from:recipient2});
+                await data.token.approve(_from,amount,{from:_as()});
                 
-                await data.token.transferFrom(recipient2,recipient1,amount,{from:_});
+                await data.token.transferFrom(_as(),_to(),amount,{from:_from});
                 
-                var userOwnsAfter = (await data.token.balanceOf(recipient2)).toNumber();
+                var userOwnsAfter = (await data.token.balanceOf(_as())).toNumber();
                 assert.equal(userOwns, userOwnsAfter+amount);
               });
               
               it('cause recipient balance to increase by send amount',async function(){
-                var userOwns = (await data.token.balanceOf(recipient1)).toNumber();
+                var userOwns = (await data.token.balanceOf(_to())).toNumber();
                 var amount = userOwns/2;
-                await data.token.approve(_,amount,{from:recipient2});
+                await data.token.approve(_from,amount,{from:_as()});
                 
-                await data.token.transferFrom(recipient2,recipient1,amount,{from:_});
+                await data.token.transferFrom(_as(),_to(),amount,{from:_from});
                 
-                var userOwnsAfter = (await data.token.balanceOf(recipient1)).toNumber();
+                var userOwnsAfter = (await data.token.balanceOf(_to())).toNumber();
                  assert.equal(userOwns, userOwnsAfter-amount);
               });
-               
+          
+          }
+          
+          describe('token transfer when no dividend to pay',function() {
+            tokenTransferTestCases(_,function(){return recipient1;});
+          });
+          
+          describe('token transferFrom when no dividend to pay',function(){
+            tokenTransferFromTestCases(_,function(){return recipient1;},function(){return recipient2;})
               
           });
         
@@ -151,7 +156,7 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
             }); 
          });
          
-          describe('token transfer to contract address',function() {
+          describe('token transfer to token contract address',function() {
               tokenTransferTestCases(_,function(){return data.token.address;});
               
               it('increases dividendSum amount by sended amount ',async function(){
