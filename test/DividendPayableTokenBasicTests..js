@@ -14,16 +14,17 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
       }
   }
   
-  contract('DividendPayableTokenMock', function ([_, recipient1, recipient2]) {
+  contract('DividendPayableToken', function ([_, recipient1, recipient2]) {
        var data = {};
- 
-          const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
           beforeEach(async function () {
-              data.startTime = latestTime() + duration.days(1);
-              data.tokenPromise = DividendPayableTokenMock.new(_,recipient1,recipient2,10000);
-              data.token = await data.tokenPromise;
+            
+                data.startTime = latestTime() + duration.days(1);
+                data.tokenPromise = DividendPayableTokenMock.new(_,recipient1,recipient2,10000);
+                data.token = await data.tokenPromise;
+                await data.token.setNow(data.startTime);
+                await data.token.transfer(_,0);
           });
-                      
+          
           describe('token total supply', function () {
             it('returns the total amount of tokens', async function () {
                 var totalSupply = await data.token.totalSupply();
@@ -157,7 +158,7 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
          });
          
           describe('token transfer to token contract address',function() {
-              tokenTransferTestCases(_,function(){return data.token.address;});
+             tokenTransferTestCases(_,function(){return data.token.address;});
               
               it('increases dividendSum amount by sended amount ',async function(){
                 var period = (await data.token.dividendRound()).toNumber();;
@@ -170,7 +171,7 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
           });
           
           describe('token transferFrom to token contract address',function() {
-            tokenTransferFromTestCases(_,
+             tokenTransferFromTestCases(_,
                     function(){return data.token.address;},
                     function(){return recipient2;})
               
@@ -184,4 +185,52 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
                 assert.equal(dividendSumAfter, dividendSumBefore+amount);
               });
           });
+          
+          
+          describe('dividendRound changes depending on time passing', function(){
+              it('returns same dividendRound after computeDividendRound() if no time passed',async function(){
+                  var period = (await data.token.dividendRound()).toNumber();
+                  await data.token.runComputeDividendRound();
+                  var period2 = (await data.token.dividendRound()).toNumber();
+                  assert.equal(period, period2);
+              });
+              it('returns same dividendRound after computeDividendRound() if to little time passed',async function(){
+                  var period = (await data.token.dividendRound()).toNumber();
+                  var _oldNow = (await data.token.getNow()).toNumber();
+                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
+                  var periodToAdd = periodSpan - (_oldNow%periodSpan);
+                  await data.token.setNow(_oldNow+periodToAdd-1);
+                  await data.token.runComputeDividendRound();
+                  var period2 = (await data.token.dividendRound()).toNumber();
+                  console.log("Old now = "+_oldNow+
+                  " periodSpan="+periodSpan+
+                  " periodToAdd="+periodToAdd+
+                  " oldPeriod ="+period+
+                  " newPeriod ="+period2);
+                  assert.equal(period, period2);
+              });
+              it('returns dividendRound increased by 1 after computeDividendRound() if enought time passed',async function(){
+                  var period = (await data.token.dividendRound()).toNumber();
+                  var _oldNow = (await data.token.getNow()).toNumber();
+                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
+                  await data.token.setNow(_oldNow+periodSpan);
+                  await data.token.runComputeDividendRound();
+                  var period2 = (await data.token.dividendRound()).toNumber();
+                  assert.equal(period+1, period2);
+              });
+              it('returns dividendRound increased by 2 after double DIV_PERIOD  passed',async function(){
+                  var period = (await data.token.dividendRound()).toNumber();
+                  var _oldNow = (await data.token.getNow()).toNumber();
+                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
+                  await data.token.setNow(_oldNow+periodSpan*2);
+                  await data.token.runComputeDividendRound();
+                  var period2 = (await data.token.dividendRound()).toNumber();
+                  assert.equal(period+2, period2);
+              });
+          });
   });
+  
+  
+  
+  
+  

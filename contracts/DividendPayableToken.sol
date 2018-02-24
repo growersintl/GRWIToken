@@ -4,6 +4,7 @@ import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 contract DividendPayableToken is MintableToken {
 
     event NewPeriod(uint32 period);
+    event ProcessingDiv(uint32 period,uint256 gas);
     event AdditionalDividend(uint128 amount,uint32 period);
     event DividendPayed(address to,uint128 amount,uint32 period);
     
@@ -16,6 +17,14 @@ contract DividendPayableToken is MintableToken {
     function getDividendSum(uint32 period) constant returns(uint128){
         return divSums[period];
     }
+    
+  function internalTransfer(address to,uint256 value) internal returns(bool){
+      require(balanceOf(address(this))>=value);
+      balances[address(this)] = balances[address(this)] - value;
+      balances[to] = balances[to] + value;
+      Transfer(address(this),to,value);
+      return true;
+  }
     
   function getNow() public constant returns(uint32){
       return uint32(now);
@@ -54,17 +63,22 @@ contract DividendPayableToken is MintableToken {
               uint128 _ds = divSums[i];
               amountToPay = amountToPay + uint128(((uint256(_ds)*uint256(tokensHolded)))/totalSupply());
           }
-          if(amountToPay>0){
-              if(transfer(to,amountToPay)){
+          if(amountToPay>0){ 
+              if(internalTransfer(to,amountToPay)){
                   DividendPayed(to,amountToPay,dividendRound);
                   userDividendRound[to]=dividendRound;
               }
+          }
+          else{
+            userDividendRound[to]=dividendRound;
+            DividendPayed(to,amountToPay,dividendRound);
           }
       }
   }
     
   function transfer(address to,uint256 _value) public returns(bool){
       computeDividendRound(); 
+      
       processDividend(msg.sender);
       if(to==address(this)){
           // add dividendSum 
