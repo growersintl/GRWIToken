@@ -56,24 +56,24 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
               it('fails if user try to send more funds that he owns',async function(){
                 var userOwns = (await data.token.balanceOf(_)).toNumber();
                 
-                var promise = data.token.transfer(recipient1,userOwns+1,{from:_,data:"0x"});
+                var promise = data.token.transfer(recipient1,userOwns+1,{from:_});
                 assertRevert(promise);
               });
               it('do not fail if user try to send all funds that he owns',async function(){
                 var userOwns = (await data.token.balanceOf(_)).toNumber();
                 
-                await data.token.transfer(recipient1,userOwns,{from:_,data:"0x"});
+                await data.token.transfer(recipient1,userOwns,{from:_});
               });
               it('do not fail if user try to send some funds that he owns',async function(){
                 var userOwns = (await data.token.balanceOf(_)).toNumber();
                 
-                await data.token.transfer(recipient1,userOwns/2,{from:_,data:"0x"});
+                await data.token.transfer(recipient1,userOwns/2,{from:_});
               });
               
               it('cause sender balance to decrease by send amount',async function(){
                 var userOwns = (await data.token.balanceOf(_)).toNumber();
                 var amount = userOwns/2;
-                await data.token.transfer(recipient1,amount,{from:_,data:"0x"});
+                await data.token.transfer(recipient1,amount,{from:_});
                 var userOwnsAfter = (await data.token.balanceOf(_)).toNumber();
                 assert.equal(userOwns, userOwnsAfter+amount);
               });
@@ -81,12 +81,13 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
               it('cause recipient balance to increase by send amount',async function(){
                 var userOwns = (await data.token.balanceOf(recipient1)).toNumber();
                 var amount = userOwns/2;
-                await data.token.transfer(recipient1,amount,{from:_,data:"0x"});
+                await data.token.transfer(recipient1,amount,{from:_});
                 var userOwnsAfter = (await data.token.balanceOf(recipient1)).toNumber();
                  assert.equal(userOwns, userOwnsAfter-amount);
               });
           });
-        
+          
+          
         
          describe('fallback function', function(){
             it('it reverts',async function(){
