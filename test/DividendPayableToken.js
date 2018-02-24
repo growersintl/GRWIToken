@@ -168,4 +168,20 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
                 assert.equal(dividendSumAfter, dividendSumBefore+amount);
               });
           });
+          
+          describe('token transferFrom to token contract address',function() {
+            tokenTransferFromTestCases(_,
+                    function(){return data.token.address;},
+                    function(){return recipient2;})
+              
+              it('increases dividendSum amount by sended amount ',async function(){
+                var period = (await data.token.dividendRound()).toNumber();;
+                var dividendSumBefore = (await data.token.getDividendSum(period)).toNumber();
+                var amount = 100;
+                await data.token.approve(_,amount,{from:recipient1});
+                await data.token.transferFrom(recipient1,data.token.address,amount,{from:_});
+                var dividendSumAfter = (await data.token.getDividendSum(period)).toNumber();
+                assert.equal(dividendSumAfter, dividendSumBefore+amount);
+              });
+          });
   });
