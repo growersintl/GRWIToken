@@ -35,7 +35,7 @@ module.exports = {
     rinkeby: {
       provider: provider,
       network_id: 4, // eslint-disable-line camelcase
-      gasPrice: "5000000000",
+      gasPrice: "50000000000",
       gas: 5000000,
     },
     main: {
