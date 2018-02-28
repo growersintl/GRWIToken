@@ -4,7 +4,7 @@ import './DividendPayableToken.sol';
 contract GRWIToken is DividendPayableToken {
 
 
-	string public constant name = "Groweers International";
+	string public constant name = "Growers International";
 	string public constant symbol = "GRWI";
 	uint256 public constant DECIMALS = 8;
 	uint256 public constant decimals = 8;
