@@ -80,6 +80,14 @@ contract DividendPayableTokenV2 is MintableToken {
         }
       }
   }
+  
+  
+  function getAmountToPay(address adr) constant returns(uint256) public{
+    uint256 sumFromWhichUserWasAlreadyPaid = userSums.userDividendPaidSum(to);
+      uint128 tokensHolded = uint128(balanceOf(to));
+      uint256 amountToPay = (totalDividendSum - sumFromWhichUserWasAlreadyPaid)*tokensHolded/totalSupplyForDiv();
+        
+  }
     
   function transfer(address to,uint256 _value) public returns(bool){
       processDividend(msg.sender);
