@@ -1,13 +1,13 @@
 pragma solidity ^0.4.19;
 
-import './../DividendPayableToken.sol';
+import './../GRWIToken.sol';
 
-contract DividendPayableTokenMock is DividendPayableToken {
+contract DividendPayableTokenMock is GRWIToken {
 
     event NewTime(uint32 time);
     event ProcessDividend(address adr,uint32 time,uint32 round);
 
-    function DividendPayableTokenMock(address adr1,address adr2, address adr3, uint256 baseAmount) DividendPayableToken() public {
+    function DividendPayableTokenMock(address adr1,address adr2, address adr3, uint256 baseAmount) GRWIToken() public {
         mint(adr1,baseAmount*97);
         mint(adr2,baseAmount*2);
         mint(adr3,baseAmount);
@@ -31,18 +31,4 @@ contract DividendPayableTokenMock is DividendPayableToken {
       NewTime(_now);
   }
   
-  function processDividend(address to) internal{
-    ProcessDividend(to,_now,dividendRound);
-    super.processDividend(to);
-  }
-  
-  function updatePeriod(address to) public{
-    userDividendRound[to] = dividendRound;
-  }
-  function getUserDivRound(address u) public constant returns(uint32){
-    return userDividendRound[u];
-  }
-  function runComputeDividendRound() public{
-    super.computeDividendRound();
-  }
 }

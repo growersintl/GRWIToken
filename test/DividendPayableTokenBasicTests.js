@@ -161,11 +161,10 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
              tokenTransferTestCases(_,function(){return data.token.address;});
               
               it('increases dividendSum amount by sended amount ',async function(){
-                var period = (await data.token.dividendRound()).toNumber();;
-                var dividendSumBefore = (await data.token.getDividendSum(period)).toNumber();
+                var dividendSumBefore = (await data.token.totalDividendSum()).toNumber();
                 var amount = 100;
                 await data.token.transfer(data.token.address,amount,{from:_});
-                var dividendSumAfter = (await data.token.getDividendSum(period)).toNumber();
+                var dividendSumAfter = (await data.token.totalDividendSum()).toNumber();
                 assert.equal(dividendSumAfter, dividendSumBefore+amount);
               });
           });
@@ -176,58 +175,15 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
                     function(){return recipient2;})
               
               it('increases dividendSum amount by sended amount ',async function(){
-                var period = (await data.token.dividendRound()).toNumber();;
-                var dividendSumBefore = (await data.token.getDividendSum(period)).toNumber();
+                var dividendSumBefore = (await data.token.totalDividendSum()).toNumber();
                 var amount = 100;
                 await data.token.approve(_,amount,{from:recipient1});
                 await data.token.transferFrom(recipient1,data.token.address,amount,{from:_});
-                var dividendSumAfter = (await data.token.getDividendSum(period)).toNumber();
+                var dividendSumAfter = (await data.token.totalDividendSum()).toNumber();
                 assert.equal(dividendSumAfter, dividendSumBefore+amount);
               });
           });
           
-          
-          describe('dividendRound changes depending on time passing', function(){
-              it('returns same dividendRound after computeDividendRound() if no time passed',async function(){
-                  var period = (await data.token.dividendRound()).toNumber();
-                  await data.token.runComputeDividendRound();
-                  var period2 = (await data.token.dividendRound()).toNumber();
-                  assert.equal(period, period2);
-              });
-              it('returns same dividendRound after computeDividendRound() if to little time passed',async function(){
-                  var period = (await data.token.dividendRound()).toNumber();
-                  var _oldNow = (await data.token.getNow()).toNumber();
-                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
-                  var periodToAdd = periodSpan - (_oldNow%periodSpan);
-                  await data.token.setNow(_oldNow+periodToAdd-1);
-                  await data.token.runComputeDividendRound();
-                  var period2 = (await data.token.dividendRound()).toNumber();
-                  console.log("Old now = "+_oldNow+
-                  " periodSpan="+periodSpan+
-                  " periodToAdd="+periodToAdd+
-                  " oldPeriod ="+period+
-                  " newPeriod ="+period2);
-                  assert.equal(period, period2);
-              });
-              it('returns dividendRound increased by 1 after computeDividendRound() if enought time passed',async function(){
-                  var period = (await data.token.dividendRound()).toNumber();
-                  var _oldNow = (await data.token.getNow()).toNumber();
-                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
-                  await data.token.setNow(_oldNow+periodSpan);
-                  await data.token.runComputeDividendRound();
-                  var period2 = (await data.token.dividendRound()).toNumber();
-                  assert.equal(period+1, period2);
-              });
-              it('returns dividendRound increased by 2 after double DIV_PERIOD  passed',async function(){
-                  var period = (await data.token.dividendRound()).toNumber();
-                  var _oldNow = (await data.token.getNow()).toNumber();
-                  var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
-                  await data.token.setNow(_oldNow+periodSpan*2);
-                  await data.token.runComputeDividendRound();
-                  var period2 = (await data.token.dividendRound()).toNumber();
-                  assert.equal(period+2, period2);
-              });
-          });
   });
   
   

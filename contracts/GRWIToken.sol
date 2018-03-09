@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
-import './DividendPayableToken.sol';
-contract GRWIToken is DividendPayableToken {
+import './DividendPayableTokenV2.sol';
+contract GRWIToken is DividendPayableTokenV2 {
 
 
 	string public constant name = "Growers International";
@@ -9,7 +9,7 @@ contract GRWIToken is DividendPayableToken {
 	uint256 public constant DECIMALS = 8;
 	uint256 public constant decimals = 8;
 	
-	function GRWIToken() DividendPayableToken() public{
+	function GRWIToken() DividendPayableTokenV2() public{
 	}
 	
 	function init(address balancer) public{

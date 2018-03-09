@@ -23,10 +23,6 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
               data.token = await data.tokenPromise;
               await data.token.setNow(data.startTime);
               await data.token.transfer(_,0);
-              await data.token.updatePeriod(data.token.address);
-              await data.token.updatePeriod(_);
-              await data.token.updatePeriod(recipient1);
-              await data.token.updatePeriod(recipient2);
               await data.token.transfer(data.token.address,1000);
         
           });
@@ -35,27 +31,26 @@ const DividendPayableTokenMock = artifacts.require('DividendPayableTokenMock');
           describe('dividend Release after DIV_PERIOD passed', function () {
             it('increases balance of transaction sender', async function () {
               
-                var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
                 var senderOwns = (await data.token.balanceOf(_)).toNumber();
                 var recipientOwns = (await data.token.balanceOf(recipient1)).toNumber();
-                await data.token.addToNow(periodSpan+1);
                 
-                await data.token.transfer(recipient1,0);
+                await data.token.transfer(recipient1,0,{from:_});
                 
                 var senderOwnsAfter = (await data.token.balanceOf(_)).toNumber();
                 var recipientOwnsAfter = (await data.token.balanceOf(recipient1)).toNumber();
+                console.log(recipientOwnsAfter,recipientOwns);
                 assert.isAbove(senderOwnsAfter,senderOwns);
                 //checks if increase is proportional to amounts owned
+                console.log(senderOwnsAfter,senderOwns);
                 assert.equal(recipientOwnsAfter/recipientOwns,senderOwnsAfter/senderOwns);
             });
             
             
             it('increases balance of transaction recipient', async function () {
-                var periodSpan = (await data.token.DIV_PERIOD()).toNumber();
                 var recipientOwns = (await data.token.balanceOf(recipient1)).toNumber();
-                await data.token.addToNow(periodSpan);
                 await data.token.transfer(recipient1,0,{from:_});
                 var recipientOwnsAfter = (await data.token.balanceOf(recipient1)).toNumber();
+                console.log(recipientOwnsAfter,recipientOwns);
                 assert.isAbove(recipientOwnsAfter,recipientOwns);
             });
           });    
