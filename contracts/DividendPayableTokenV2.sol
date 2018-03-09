@@ -35,12 +35,13 @@ contract DividendPayableTokenV2 is MintableToken {
         _;
       }
   }
-  
-  function resetDividends() public onlyOwner{
-      userSums.kill();
-      userSums = new DividendInfoContract();
-      totalDividendSum = this.balanceOf(this);
-      totalDividendPayed = 0;
+    
+  function internalTransfer(address to,uint256 value) internal returns(bool){
+      require(balanceOf(address(this))>=value);
+      balances[address(this)] = balances[address(this)] - value;
+      balances[to] = balances[to] + value;
+      Transfer(address(this),to,value);
+      return true;
   }
     
   function getNow() public constant returns(uint32){
@@ -70,10 +71,11 @@ contract DividendPayableTokenV2 is MintableToken {
       uint256 sumFromWhichUserWasAlreadyPaid = userSums.userDividendPaidSum(to);
       uint128 tokensHolded = uint128(balanceOf(to));
       uint256 amountToPay = (totalDividendSum - sumFromWhichUserWasAlreadyPaid)*tokensHolded/totalSupplyForDiv();
+      Debug(tokensHolded,amountToPay,totalDividendSum,totalSupply());
       if(amountToPay>getMinimumAmountOfDividend()){
-        if(this.transfer(to,amountToPay)){
+        if(internalTransfer(to,amountToPay)){
             DividendPayed(to,amountToPay);
-            userSums.setUserDividendPaidSum(to,userSums.userDividendPaidSum(to)+amountToPay);
+            userSums.setUserDividendPaidSum(to,totalDividendSum);
             totalDividendPayed = totalDividendPayed+amountToPay ;
         }
       }

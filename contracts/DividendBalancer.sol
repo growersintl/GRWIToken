@@ -19,7 +19,7 @@ contract DividendBalancer is Ownable {
     
     function () public{
         uint32 _p = token.dividendRound();
-        uint128 _divSum = token.getDividendSum(_p);
+        uint128 _divSum = token.totalDividendSum();
         uint128 _balance = uint128(token.balanceOf(address(this)));
         if(_balance>0){
             if(_divSum<desiredDividendLvl){
