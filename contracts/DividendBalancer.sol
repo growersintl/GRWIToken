@@ -8,6 +8,7 @@ contract DividendBalancer is Ownable {
     event DividendBalancerEmpty();
     DividendToken public token ;
     uint256 public desiredDividendLvl;
+    uint256 public constant DIV_PERIOD = 3600*24*30;
     
     function DividendBalancer(address _token) public{
         token = DividendToken(_token);    
@@ -18,14 +19,16 @@ contract DividendBalancer is Ownable {
     }
     
     function () public{
-        uint32 _p = token.dividendRound();
-        uint128 _divSum = token.totalDividendSum();
-        uint128 _balance = uint128(token.balanceOf(address(this)));
+    
+        uint256 contractOperationDuration = now - token.timeStart();
+        uint256 _balance = uint128(token.balanceOf(address(this)));
+        uint256 _divSum = token.totalDividendSum();
+        uint256 desiredSum = desiredDividendLvl*((contractOperationDuration)/DIV_PERIOD+1);
         if(_balance>0){
-            if(_divSum<desiredDividendLvl){
-                if(_balance>desiredDividendLvl - _divSum){
-                    token.transfer(address(token),desiredDividendLvl - _divSum);
-                    DividendSumIncreased(desiredDividendLvl - _divSum);
+            if(_divSum<desiredSum){
+                if(_balance>desiredSum - _divSum){
+                    token.transfer(address(token),desiredSum - _divSum);
+                    DividendSumIncreased(desiredSum - _divSum);
                 }
                 else{
                     token.transfer(address(token),_balance);
@@ -39,5 +42,6 @@ contract DividendBalancer is Ownable {
         {
             DividendBalancerEmpty();
         }
+        
     }
 }
