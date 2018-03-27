@@ -44,9 +44,10 @@ contract DividendPayableTokenV2 is MintableToken {
       return true;
   }
     
-  function getNow() public constant returns(uint32){
-      return uint32(now);
+  function getNow() public constant returns(uint256){
+      return now;
   }
+  
   
   function getMinimumAmountOfDividend() public constant returns(uint256){
     return 1;
@@ -55,6 +56,14 @@ contract DividendPayableTokenV2 is MintableToken {
   function DividendPayableTokenV2() MintableToken() public{
       timeStart = getNow();
       userSums = new DividendInfoContract();
+  }
+  
+  function clearDividends() public onlyOwner{
+      userSums.kill();
+      userSums = new DividendInfoContract();
+      totalDividendSum = 0;
+      totalDividendPayed = 0;
+      addToDividendSum(uint128(this.balance));
   }
   
   function addToDividendSum(uint128 _value) internal{
@@ -71,7 +80,7 @@ contract DividendPayableTokenV2 is MintableToken {
       uint256 sumFromWhichUserWasAlreadyPaid = userSums.userDividendPaidSum(to);
       uint128 tokensHolded = uint128(balanceOf(to));
       uint256 amountToPay = (totalDividendSum - sumFromWhichUserWasAlreadyPaid)*tokensHolded/totalSupplyForDiv();
-      Debug(tokensHolded,amountToPay,totalDividendSum,totalSupply());
+//      Debug(tokensHolded,amountToPay,totalDividendSum,totalSupply());
       if(amountToPay>getMinimumAmountOfDividend()){
         if(internalTransfer(to,amountToPay)){
             DividendPayed(to,amountToPay);
@@ -86,7 +95,7 @@ contract DividendPayableTokenV2 is MintableToken {
     uint256 sumFromWhichUserWasAlreadyPaid = userSums.userDividendPaidSum(adr);
       uint128 tokensHolded = uint128(balanceOf(adr));
       uint256 amountToPay = (totalDividendSum - sumFromWhichUserWasAlreadyPaid)*tokensHolded/totalSupplyForDiv();
-         return amountToPay;
+        
   }
     
   function transfer(address to,uint256 _value) public returns(bool){
