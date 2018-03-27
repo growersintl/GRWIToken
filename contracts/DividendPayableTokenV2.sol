@@ -64,7 +64,7 @@ contract DividendPayableTokenV2 is MintableToken {
   
   
   function totalSupplyForDiv() public returns(uint256){
-    return totalSupply()-totalDividendPayed  ;
+    return totalSupply()-totalDividendPayed-balanceOf(this)  ;
   }
   
   function processDividend(address to) isNotSelf(to) isSupplyNotZero() internal{

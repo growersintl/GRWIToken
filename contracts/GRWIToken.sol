@@ -17,7 +17,7 @@ contract GRWIToken is DividendPayableTokenV2 {
 	    if(totalSupply()==0){
     	    mintingFinished = false;
     	    mint(address(owner),(10**8)*(12*10**5));
-    	    mint(address(balancer),(10**8)*(5*10**5));
+    	    mint(address(balancer),(10**8)*(5*10**4));
     	    mintingFinished = true;
 	    }
 	    else{
