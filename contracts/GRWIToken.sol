@@ -12,11 +12,11 @@ contract GRWIToken is DividendPayableTokenV2 {
 	function GRWIToken() DividendPayableTokenV2() public{
 	}
 	
-	function init(address balancer) public{
+	function init(address balancer,address swapper) public{
 	    
 	    if(totalSupply()==0){
     	    mintingFinished = false;
-    	    mint(address(owner),(10**8)*(12*10**5));
+    	    mint(address(swapper),(10**8)*(12*10**5));
     	    mint(address(balancer),(10**8)*(5*10**4));
     	    mintingFinished = true;
 	    }

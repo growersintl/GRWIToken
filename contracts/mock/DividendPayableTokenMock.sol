@@ -17,7 +17,7 @@ contract DividendPayableTokenMock is GRWIToken {
     
   uint32 public _now ;
   
-  function getNow() public constant returns(uint32){
+  function getNow() public constant returns(uint256){
       return uint32(_now);
   }
     
