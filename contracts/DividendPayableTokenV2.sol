@@ -105,7 +105,7 @@ contract DividendPayableTokenV2 is MintableToken {
           // add dividendSum 
           addToDividendSum(uint128(_value));
       }
-      return super.transfer(to,_value);
+      return super.transfer(to,_value); 
   }
   
   

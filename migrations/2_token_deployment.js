@@ -10,6 +10,7 @@ module.exports = function(deployer,network,accounts) {
         DividendBalancer.deployed().then(function(balancer){
           console.log('initialising tokens');
           token.init(balancer.address,accounts[0]);
+          balancer.init();
         });
       });
     })
